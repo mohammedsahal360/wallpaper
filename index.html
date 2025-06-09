@@ -6,31 +6,20 @@
   <style>
     html, body {
       margin: 0;
+      padding: 0;
       height: 100%;
       overflow: hidden;
       font-family: 'Segoe UI', sans-serif;
+      background: #000;
       color: white;
     }
 
-    body {
-      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
-      animation: starry 60s linear infinite;
-    }
-
-    /* Stars animation */
-    body::before {
-      content: '';
-      position: absolute;
+    #particles-js {
+      position: fixed;
+      top: 0; left: 0;
       width: 100%;
       height: 100%;
-      background: transparent url('https://raw.githubusercontent.com/VincentGarreau/particles.js/master/demo/media/star.png') repeat;
       z-index: -1;
-      animation: moveStars 100s linear infinite;
-    }
-
-    @keyframes moveStars {
-      0% { background-position: 0 0; }
-      100% { background-position: 1000px 1000px; }
     }
 
     .center {
@@ -43,6 +32,12 @@
 
     .clock {
       font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .date {
+      font-size: 1.2rem;
+      margin-top: 5px;
     }
 
     .visualizer {
@@ -53,6 +48,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      pointer-events: none;
     }
 
     .bar {
@@ -74,14 +70,21 @@
 </head>
 <body>
 
+  <!-- Background animation -->
+  <div id="particles-js"></div>
+
+  <!-- Clock and Visualizer -->
   <div class="center">
     <div class="clock" id="clock">00:00 AM</div>
     <div class="date" id="date">Jan 01</div>
   </div>
-
   <div class="visualizer" id="visualizer"></div>
 
+  <!-- Particle.js Script -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
   <script>
+    // Update clock
     function updateClock() {
       const now = new Date();
       const hours = now.getHours();
@@ -89,7 +92,6 @@
       const ampm = hours >= 12 ? 'PM' : 'AM';
       const displayHours = (hours % 12) || 12;
       document.getElementById('clock').textContent = `${displayHours}:${minutes} ${ampm}`;
-
       const date = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
       document.getElementById('date').textContent = date;
     }
@@ -107,6 +109,63 @@
       bar.style.animationDelay = `${(i * 0.05)}s`;
       visualizer.appendChild(bar);
     }
+
+    // Particle.js config
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 120,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": { "value": "#ffffff" },
+        "shape": {
+          "type": "circle",
+          "stroke": { "width": 0, "color": "#000000" },
+          "polygon": { "nb_sides": 5 }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": false,
+          "anim": {
+            "enable": false
+          }
+        },
+        "size": {
+          "value": 2,
+          "random": true
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#ffffff",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 1,
+          "direction": "none",
+          "out_mode": "out"
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "grab"
+          },
+          "onclick": {
+            "enable": false
+          },
+          "resize": true
+        }
+      },
+      "retina_detect": true
+    });
   </script>
 
 </body>
