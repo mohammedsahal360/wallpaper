@@ -45,16 +45,16 @@
       margin-top: 5px;
     }
 
-    .visualizer {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
+#visualizer {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 100px;
+  pointer-events: none;
+}
+
 
     @keyframes pulse {
       0%, 100% { transform: scaleY(1); }
@@ -74,35 +74,38 @@
     const canvas = document.getElementById("visualizer");
   const ctx = canvas.getContext("2d");
 
-  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-    const audioCtx = new AudioContext();
-    const analyser = audioCtx.createAnalyser();
-    const source = audioCtx.createMediaStreamSource(stream);
+ navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+  const audioCtx = new AudioContext();
+  const analyser = audioCtx.createAnalyser();
+  const source = audioCtx.createMediaStreamSource(stream);
 
-    source.connect(analyser);
-    analyser.fftSize = 64;
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
+  source.connect(analyser);
+  analyser.fftSize = 64;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
 
-    function draw() {
-      requestAnimationFrame(draw);
-      analyser.getByteFrequencyData(dataArray);
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
 
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const barWidth = canvas.width / bufferLength;
-      dataArray.forEach((value, i) => {
-        const barHeight = value;
-        ctx.fillStyle = `rgb(${value + 100},50,150)`;
-        ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
-      });
-    }
+    const barWidth = canvas.width / bufferLength;
+    dataArray.forEach((value, i) => {
+      const barHeight = value;
+      ctx.fillStyle = `rgb(${value + 100},50,150)`;
+      ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+    });
+  }
 
-    draw();
-  }).catch(err => {
-    alert("Microphone access denied or BlackHole not set as input: " + err);
-  });
+  // 👉 Updated this line:
+  audioCtx.resume().then(() => draw());
+
+}).catch(err => {
+  alert("Microphone access denied or BlackHole not set as input: " + err);
+});
+
 
 
     
