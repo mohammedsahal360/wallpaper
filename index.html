@@ -69,8 +69,6 @@
     <div class="date" id="date">Jan 01</div>
   </div>
 
-  <div class="visualizer" id="visualizer"></div>
-
   <script>
     function updateClock() {
       const now = new Date();
@@ -88,22 +86,6 @@
 
     // Optional: Add visualizer bars for design
     const visualizer = document.getElementById('visualizer');
-    const bars = 60;
-    for (let i = 0; i < bars; i++) {
-      const bar = document.createElement('div');
-      bar.className = 'bar';
-      bar.style.position = 'absolute';
-      bar.style.width = '2px';
-      bar.style.height = '40px';
-      bar.style.background = 'white';
-      bar.style.top = '0';
-      bar.style.left = '50%';
-      bar.style.transformOrigin = 'bottom center';
-      bar.style.transform = `rotate(${(360 / bars) * i}deg) translateY(-150px)`;
-      bar.style.animation = 'pulse 2s infinite ease-in-out';
-      bar.style.animationDelay = `${(i * 0.05)}s`;
-      visualizer.appendChild(bar);
-    }
   </script>
 </body>
 </html>
