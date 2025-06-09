@@ -30,15 +30,16 @@
 
     .center {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 80%;
+      left: 15%;
       transform: translate(-50%, -50%);
       text-align: center;
     }
 
     .clock {
-      font-size: 2.5rem;
+      font-size: 5rem;
       font-weight: bold;
+      font-family:Impact, Haettenschweiler, 'Arial Narro ;
     }
 
     .date {
@@ -57,16 +58,6 @@
       pointer-events: none;
     }
 
-    .bar {
-      position: absolute;
-      width: 2px;
-      height: 40px;
-      background: white;
-      top: 0;
-      left: 50%;
-      transform-origin: bottom center;
-      animation: pulse 2s infinite ease-in-out;
-    }
 
     @keyframes pulse {
       0%, 100% { transform: scaleY(1); }
@@ -78,7 +69,7 @@
 
   <!-- Background animation -->
   <canvas id="bg-canvas" style="position: fixed; top:0; left:0; width: 100%; height: 100%; z-index: -1;"></canvas>
-  <video id="bg-video" src="bgv.mp4" muted autoplay loop playsinline 
+  <video id="bg-video" src="bgs.mp4" muted autoplay loop playsinline 
        style="position: fixed; z-index: 0;">
 </video>
 
@@ -131,14 +122,6 @@
     setInterval(updateClock, 1000);
 
     const visualizer = document.getElementById('visualizer');
-    const bars = 60;
-    for (let i = 0; i < bars; i++) {
-      const bar = document.createElement('div');
-      bar.className = 'bar';
-      bar.style.transform = `rotate(${(360 / bars) * i}deg) translateY(-150px)`;
-      bar.style.animationDelay = `${(i * 0.05)}s`;
-      visualizer.appendChild(bar);
-    }
   </script>
 
 </body>
