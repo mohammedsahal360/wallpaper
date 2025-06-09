@@ -1,38 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Live Wallpaper Clock</title>
   <link rel="icon" href="data:,">
   <style>
-    *{
-        margin: 0;
-    }
-    html, body {
+    * {
       margin: 0;
       padding: 0;
+    }
+
+    html, body {
       height: 100%;
       overflow: hidden;
       font-family: 'Segoe UI', sans-serif;
-      background: #000;
+      background-color: #000;
       color: white;
     }
 
-        body {
-  background-image: url('view-three-dimensional-tree.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-    #bg-video {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -1;
+    body {
+      background-image: url('view-three-dimensional-tree.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
     .center {
@@ -46,7 +37,7 @@
     .clock {
       font-size: 5rem;
       font-weight: bold;
-      font-family:Impact, Haettenschweiler, 'Arial Narro ;
+      font-family: Impact, Haettenschweiler, 'Arial Narrow', sans-serif;
     }
 
     .date {
@@ -65,7 +56,6 @@
       pointer-events: none;
     }
 
-
     @keyframes pulse {
       0%, 100% { transform: scaleY(1); }
       50% { transform: scaleY(1.5); }
@@ -74,27 +64,14 @@
 </head>
 <body>
 
-  <!-- Background animation -->
-
-
-  
-  
-
-  <!-- Clock and Visualizer -->
   <div class="center">
     <div class="clock" id="clock">00:00 AM</div>
     <div class="date" id="date">Jan 01</div>
   </div>
+
   <div class="visualizer" id="visualizer"></div>
 
-  <!-- Visualizer Script -->
   <script>
-
-  window.addEventListener('resize', resize);
-  resize();
-
-
-  video.play().catch(console.error);
     function updateClock() {
       const now = new Date();
       const hours = now.getHours();
@@ -109,8 +86,24 @@
     updateClock();
     setInterval(updateClock, 1000);
 
+    // Optional: Add visualizer bars for design
     const visualizer = document.getElementById('visualizer');
+    const bars = 60;
+    for (let i = 0; i < bars; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.style.position = 'absolute';
+      bar.style.width = '2px';
+      bar.style.height = '40px';
+      bar.style.background = 'white';
+      bar.style.top = '0';
+      bar.style.left = '50%';
+      bar.style.transformOrigin = 'bottom center';
+      bar.style.transform = `rotate(${(360 / bars) * i}deg) translateY(-150px)`;
+      bar.style.animation = 'pulse 2s infinite ease-in-out';
+      bar.style.animationDelay = `${(i * 0.05)}s`;
+      visualizer.appendChild(bar);
+    }
   </script>
-
 </body>
 </html>
