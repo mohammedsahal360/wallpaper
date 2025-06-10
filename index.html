@@ -45,16 +45,15 @@
       margin-top: 5px;
     }
 
-#visualizer {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  height: 100px;
-  pointer-events: none;
-}
-
+    #visualizer {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 100px;
+      pointer-events: none;
+    }
 
     @keyframes pulse {
       0%, 100% { transform: scaleY(1); }
@@ -68,47 +67,52 @@
     <div class="clock" id="clock">00:00 AM</div>
     <div class="date" id="date">Jan 01</div>
   </div>
-  <canvas id="visualizer" width="600" height="100"></canvas>
+  <canvas id="visualizer"></canvas>
 
   <script>
     const canvas = document.getElementById("visualizer");
-  const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
 
- navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-  const audioCtx = new AudioContext();
-  const analyser = audioCtx.createAnalyser();
-  const source = audioCtx.createMediaStreamSource(stream);
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-  source.connect(analyser);
-  analyser.fftSize = 64;
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      const audioCtx = new AudioContext();
+      const analyser = audioCtx.createAnalyser();
+      const source = audioCtx.createMediaStreamSource(stream);
 
-  function draw() {
-    requestAnimationFrame(draw);
-    analyser.getByteFrequencyData(dataArray);
+      source.connect(analyser);
+      analyser.fftSize = 64;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
 
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+      function draw() {
+        requestAnimationFrame(draw);
+        analyser.getByteFrequencyData(dataArray);
 
-    const barWidth = canvas.width / bufferLength;
-    dataArray.forEach((value, i) => {
-      const barHeight = value;
-      ctx.fillStyle = `rgb(${value + 100},50,150)`;
-      ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = canvas.width / bufferLength;
+        dataArray.forEach((value, i) => {
+          const barHeight = value;
+          ctx.fillStyle = `rgb(${value + 100},50,150)`;
+          ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+        });
+      }
+
+      audioCtx.resume().then(draw);
+
+    }).catch(err => {
+      alert("Microphone access denied or not available: " + err.message);
     });
-  }
 
-  // 👉 Updated this line:
-  audioCtx.resume().then(() => draw());
-
-}).catch(err => {
-  alert("Microphone access denied or BlackHole not set as input: " + err);
-});
-
-
-
-    
     function updateClock() {
       const now = new Date();
       const hours = now.getHours();
@@ -122,9 +126,7 @@
 
     updateClock();
     setInterval(updateClock, 1000);
-
-    // Optional: Add visualizer bars for design
-    const visualizer = document.getElementById('visualizer');
   </script>
+
 </body>
 </html>
