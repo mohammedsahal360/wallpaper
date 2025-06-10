@@ -67,7 +67,7 @@
     <div class="clock" id="clock">00:00 AM</div>
     <div class="date" id="date">Jan 01</div>
   </div>
-  <canvas id="visualizer"></canvas>
+  <canvas id="visualizer" width="600" height="100"></canvas>
 
   <script>
     const canvas = document.getElementById("visualizer");
@@ -83,35 +83,35 @@
     window.addEventListener('resize', resizeCanvas);
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-      const audioCtx = new AudioContext();
-      const analyser = audioCtx.createAnalyser();
-      const source = audioCtx.createMediaStreamSource(stream);
+  const audioCtx = new AudioContext();
+  const analyser = audioCtx.createAnalyser();
+  const source = audioCtx.createMediaStreamSource(stream);
 
-      source.connect(analyser);
-      analyser.fftSize = 64;
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+  source.connect(analyser);
+  analyser.fftSize = 64;
 
-      function draw() {
-        requestAnimationFrame(draw);
-        analyser.getByteFrequencyData(dataArray);
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
 
-        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
 
-        const barWidth = canvas.width / bufferLength;
-        dataArray.forEach((value, i) => {
-          const barHeight = value;
-          ctx.fillStyle = `rgb(${value + 100},50,150)`;
-          ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
-        });
-      }
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      audioCtx.resume().then(draw);
-
-    }).catch(err => {
-      alert("Microphone access denied or not available: " + err.message);
+    const barWidth = canvas.width / bufferLength;
+    dataArray.forEach((value, i) => {
+      const barHeight = value;
+      ctx.fillStyle = `rgb(${value + 100}, 50, 150)`;
+      ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
     });
+  }
+
+  audioCtx.resume().then(draw);
+}).catch(err => {
+  alert("Error accessing audio: " + err.message);
+});
 
     function updateClock() {
       const now = new Date();
